@@ -1,24 +1,14 @@
-import logo from './logo.svg';
-import './App.css';
+import Button from "./components/atoms/Button.jsx";
+import StyledPadding from "./components/atoms/StyledPadding.jsx";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <StyledPadding height={15} />
+      <Button text="Test 1" onClick={() => console.log("Hello!")}></Button>
+      <StyledPadding height={15} />
+      <Button text="Test 2" onClick={() => console.log("Hello!")}></Button>
+    </>
   );
 }
 
