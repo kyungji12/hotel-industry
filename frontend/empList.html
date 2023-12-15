@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee List</title>
+  <!-- bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+  <style>
+    .modal {
+      transform: translateY(-50%);
+      top: 50%;
+    }
+
+    th,
+    td {
+      text-align: center;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid  justify-content-center mt-5">
+    <div class="d-flex justify-content-between align-items-center w-75 mx-auto ">
+      <div>
+        <h1>Welcome!</h1>
+      </div>
+      <div>
+        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
+          data-bs-target="#registerForm">REGISTER</button>
+      </div>
+    </div>
+
+    <!-- pending list -->
+    <table class="table table-hover table-striped w-75 mx-auto mt-5 mb-5 caption-top" id="pendinglist">
+      <caption>Pending Employee List</caption>
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+          <th>Address</th>
+          <th>Postal Code</th>
+          <th>Position</th>
+          <th>Salary</th>
+          <th>Starting Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <!-- employee list -->
+    <table class="table table-hover table-striped w-75 mx-auto mt-5 caption-top" id="emplist">
+      <caption>Working Employee List</caption>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+          <th>Address</th>
+          <th>Postal Code</th>
+          <th>Position</th>
+          <th>Salary</th>
+          <th>Starting Date</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- modal registration form -->
+  <div class="modal h-75" tabindex="-1" id="registerForm">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Registration Form</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="mx-auto">
+            <div class="form-group">
+              <label for="fname">First Name</label>
+              <input type="text" class="form-control" id="fname" name="fname">
+            </div>
+            <div class="form-group mt-3">
+              <label for="lname">Last Name</label>
+              <input type="text" class="form-control" id="lname" name="lname">
+            </div>
+            <div class="form-group mt-3">
+              <label for="email">E-mail</label>
+              <input type="email" class="form-control" id="email" name="email">
+            </div>
+            <div class="form-group mt-3">
+              <label for="phone">Phone Number</label>
+              <input type="tel" class="form-control" id="phone" name="phone">
+            </div>
+            <div class="form-group mt-3">
+              <label for="address">Address</label>
+              <input type="text" class="form-control" id="address" name="address">
+            </div>
+            <div class="form-group mt-3">
+              <label for="pcode">Postal Code</label>
+              <input type="text" class="form-control" id="pcode" name="pcode">
+            </div>
+            <div class="form-group mt-3">
+              <label for="position">Position</label>
+              <input type="text" class="form-control" id="position" name="position">
+            </div>
+            <div class="form-group mt-3">
+              <label for="salary">Salary</label>
+              <input type="number" class="form-control" id="salary" name="salary">
+            </div>
+            <div class="form-group mt-3">
+              <label for="date">Starting Date</label>
+              <input type="text" class="form-control" id="date" name="date">
+            </div>
+            <div class="form-group mt-3">
+              <label for="status">Status</label>
+              <input type="text" class="form-control" id="status" name="status" value="pending" readonly>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+      const tablePop = (empList) => {
+        for (let emp of empList) {
+          const tr = document.createElement("tr");
+          for (let e in emp) {
+            const td = document.createElement("td");
+            td.innerText = emp[e];
+            tr.append(td);
+          }
+          document.querySelector('#emplist tbody').append(tr);
+        }
+      }
+
+      let dataPromise = new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+          if (xhr.status == 200) {
+            resolve(JSON.parse(xhr.responseText));  // = MySQL data (employee_tb)
+          } else {
+            reject(xhr.statusText);
+          }
+        };
+        xhr.open("POST", "http://localhost/php/hotel-industry/read.php");  // pls adjust the url to yours
+        xhr.send();
+      }).then(tablePop, (reject) => alert(reject));
+
+      // register button
+      document.querySelectorAll("button")[0].addEventListener("click", () => {
+        document.getElementsByClassName("modal-backdrop")[0].style.display = "block";  // just css
+
+        let today = new Date();
+        let yyyy = today.getFullYear();
+        let mm = ("0" + (today.getMonth() + 1)).slice(-2);
+        let dd = ("0" + today.getDate()).slice(-2);
+        document.querySelector('input[name="date"]').value = yyyy + "-" + mm + "-" + dd;
+      })
+
+      // submit button
+      const storageArray = [];
+
+      document.querySelector("form").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        document.getElementsByClassName("modal")[0].style.display = "none";  // just css
+        document.getElementsByClassName("modal-backdrop")[0].style.display = "none";  // just css
+
+        let reqData = new FormData(e.target);
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+          if (xhr.status == 200) {
+            let empData = JSON.parse(xhr.responseText);
+
+            // adding a new employee to the pending employee list
+            const tr = document.createElement("tr");
+            for (let emp in empData) {
+              if (emp == "status") {
+                const td = document.createElement("td");
+                const btn = document.createElement("button");
+                btn.type = "submit";
+                btn.innerText = "PENDING";
+                btn.classList = "btn btn-primary";
+                td.append(btn);
+                tr.append(td);
+              } else {
+                const td = document.createElement("td");
+                td.innerText = empData[emp];
+                tr.append(td);
+              }
+            }
+            document.querySelector('#pendinglist tbody').append(tr);
+
+            // localStorage
+            storageArray.push(empData);
+
+            if (localStorage.getItem("pendingList") !== null) {  // if item exists in the localStorage
+              let existingData = JSON.parse(localStorage.getItem("pendingList"));
+              existingData.push(empData);
+              localStorage.setItem("pendingList", JSON.stringify(existingData));
+            } else {  // if this is the first attempt to add an employee to the pending list
+              localStorage.setItem("pendingList", JSON.stringify(storageArray));
+            }
+          }
+        };
+        xhr.open("POST", 'http://localhost/php/hotel-industry/form.php');  // pls adjust the url to yours
+        xhr.send(reqData);
+      })
+
+      // loading pendinglist table
+      if (localStorage.getItem("pendingList") !== null) { 
+        for (let item of JSON.parse(localStorage.getItem("pendingList"))) {
+          const tr = document.createElement("tr");
+
+          for (let i in item) {
+            if (i == "status") {
+              const td = document.createElement("td");
+              const btn = document.createElement("button");
+              btn.type = "submit";
+              btn.innerText = "PENDING";
+              btn.classList = "btn btn-primary";
+              td.append(btn);
+              tr.append(td);
+            } else {
+              const td = document.createElement("td");
+              td.innerText = item[i];
+              tr.append(td);
+            }
+          }
+          document.querySelector('#pendinglist tbody').append(tr);
+        }
+      } 
+    </script>
+</body>
+
+</html>
