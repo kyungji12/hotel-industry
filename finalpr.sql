@@ -105,6 +105,29 @@ ALTER TABLE `rooms`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
+CREATE TABLE `Rooms` (
+  `rid` int(11) NOT NULL,
+  `room_type` varchar(50) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `details` varchar(200),
+  PRIMARY KEY (rid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `Dates` (
+  `did` date() NOT NULL,
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `Availability` (
+  `aid` date() NOT NULL,
+  `availability` TINYINT(1) DEFAULT 1,
+  `rid` int(11) NOT NULL,
+  PRIMARY KEY (aid),
+  FOREIGN KEY (did) REFERENCES Dates(rid),
+  FOREIGN KEY (rid) REFERENCES Rooms(rid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
