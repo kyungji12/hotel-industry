@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 13, 2023 at 07:53 AM
+-- Generation Time: Dec 11, 2023 at 09:50 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.1.12
 
@@ -43,14 +43,6 @@ CREATE TABLE `employees` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `employees`
---
-
-INSERT INTO `employees` (`id`, `fname`, `lname`, `email`, `phone_number`, `address`, `postal_code`, `position`, `salary`, `Starting_Date`) VALUES
-(1, 'Jeferson', 'Grimaldo', 'jefgrim@gmail.com', 12345679, '1907 granville, vancouver', 'v5c 4f3', 'backend developer', 5000, '2023-12-04'),
-(2, 'test', 'test', 'test@mail.com', 987654321, 'test', 'test', 'tester', 1000, '2023-12-03');
-
---
 -- Indexes for dumped tables
 --
 
@@ -68,7 +60,7 @@ ALTER TABLE `employees`
 -- AUTO_INCREMENT for table `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
