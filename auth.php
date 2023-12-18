@@ -22,14 +22,16 @@ if(isset($_POST["email"]) && isset($_POST["password"])){
         echo json_encode(array('error' => 'Connection Error'));    }else{
         //query
         $sql = "SELECT * FROM employees WHERE email='".$email."' AND password='".$password."' ";
+        $sqlPos = "SELECT position FROM employees WHERE email='".$email."' AND password='".$password."' ";
         $query = mysqli_query($connection,$sql);
+        $position = mysqli_fetch_assoc(mysqli_query($connection,$sqlPos));
 
         //check query
         if(!$query){
             echo json_encode(array('error' => mysqli_error($connection)));
         }else{
             if(mysqli_num_rows($query)>0){
-                echo json_encode(array('message' => 'Logged in'));
+                echo json_encode(array('message' => 'Logged in','email'=>$email, 'position'=>$position));
             }else{
                 echo json_encode(array('error' => 'Wrong email or password'));
             }
