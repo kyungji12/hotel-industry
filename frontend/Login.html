@@ -39,7 +39,7 @@
   let xmlReq = new XMLReq("http://localhost/php/Finalpr/auth.php");        //creating the xml request.
   const login = (resData) => {
     resData = JSON.parse(resData);
-    sessionStorage.setItem("email", resData.email);
+    sessionStorage.setItem("email", JSON.stringify(resData.email));
     location.replace("./hkStatus.html");
 
   }

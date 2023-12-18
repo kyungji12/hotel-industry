@@ -139,7 +139,10 @@
         </div>
       </div>
     </div>
+
     <script>
+      const userPosition = JSON.parse(sessionStorage.getItem("position")); // = staff or admin -> line223
+
       const tablePop = (empList) => {
         for (let emp of empList) {
           const tr = document.createElement("tr");
@@ -177,8 +180,6 @@
       })
 
       // submit button
-      const storageArray = [];
-
       document.querySelector("form").addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -191,64 +192,108 @@
           if (xhr.status == 200) {
             let empData = JSON.parse(xhr.responseText);
 
-            // adding a new employee to the pending employee list
-            const tr = document.createElement("tr");
-            for (let emp in empData) {
-              if (emp == "status") {
-                const td = document.createElement("td");
-                const btn = document.createElement("button");
-                btn.type = "submit";
-                btn.innerText = "PENDING";
-                btn.classList = "btn btn-primary";
-                td.append(btn);
-                tr.append(td);
-              } else {
-                const td = document.createElement("td");
-                td.innerText = empData[emp];
-                tr.append(td);
-              }
-            }
-            document.querySelector('#pendinglist tbody').append(tr);
-
             // localStorage
-            storageArray.push(empData);
-
             if (localStorage.getItem("pendingList") !== null) {  // if item exists in the localStorage
               let existingData = JSON.parse(localStorage.getItem("pendingList"));
               existingData.push(empData);
               localStorage.setItem("pendingList", JSON.stringify(existingData));
             } else {  // if this is the first attempt to add an employee to the pending list
+              const storageArray = [];
+              storageArray.push(empData);
               localStorage.setItem("pendingList", JSON.stringify(storageArray));
             }
+            pendingTablePop(JSON.parse(localStorage.getItem("pendingList")));
           }
         };
-        xhr.open("POST", 'http://localhost/php/hotel-industry/form.php');  // pls adjust the url to yours
+        xhr.open("POST", 'http://localhost:81/php/hotelCMS/form.php');
         xhr.send(reqData);
       })
 
-      // loading pendinglist table
-      if (localStorage.getItem("pendingList") !== null) { 
-        for (let item of JSON.parse(localStorage.getItem("pendingList"))) {
-          const tr = document.createElement("tr");
+      const pendingTablePop = (data) => {
+        document.querySelector('#pendinglist tbody').innerHTML = "";  // initializing table to avoid old entries being duplicated
 
-          for (let i in item) {
-            if (i == "status") {
-              const td = document.createElement("td");
-              const btn = document.createElement("button");
-              btn.type = "submit";
-              btn.innerText = "PENDING";
-              btn.classList = "btn btn-primary";
-              td.append(btn);
-              tr.append(td);
-            } else {
-              const td = document.createElement("td");
-              td.innerText = item[i];
-              tr.append(td);
+        if (data !== null) {
+          for (let item of data) {
+            const tr = document.createElement("tr");
+
+            for (let i in item) {
+              if (i == "status") {
+                const td = document.createElement("td");
+                const btn = document.createElement("button");
+                if (userPosition == "admin") {
+                  btn.innerText = "APPROVE";
+                  btn.classList = "btn btn-primary";
+                  btn.type = "submit";
+                  btn.addEventListener("click", approveHandler(btn));
+                } else if (userPosition == "staff") {
+                  btn.innerText = "PENDING";
+                  btn.classList = "btn btn-secondary";
+                  btn.setAttribute("disbaled", true);
+                }
+                td.append(btn);
+                tr.append(td);
+              } else {
+                const td = document.createElement("td");
+                td.innerText = item[i];
+                tr.append(td);
+              }
+            }
+            document.querySelector('#pendinglist tbody').append(tr);
+          }
+        }
+      }
+      pendingTablePop(JSON.parse(localStorage.getItem("pendingList")));
+
+
+      let dataObj = [];
+      function approveHandler(btn) {  // sending selectedRow data to PHP and MySQL
+        btn.addEventListener("click", (e) => {
+          let dataArray = [];
+
+          let selectedRow = e.target.parentElement.parentElement; // tr
+          let selectedRowChildren = selectedRow.children;  // 9 tds
+
+          let email = selectedRow.querySelector('td:nth-child(3)').innerText;
+          deleteStorage(email);
+
+          for (let i = 0; i < selectedRowChildren.length - 1; i++) {
+            dataObj = {
+              "fname": selectedRowChildren[0].innerText,
+              "lname": selectedRowChildren[1].innerText,
+              "email": selectedRowChildren[2].innerText,
+              "phone_number": selectedRowChildren[3].innerText,
+              "address": selectedRowChildren[4].innerText,
+              "postal_code": selectedRowChildren[5].innerText,
+              "position": selectedRowChildren[6].innerText,
+              "salary": selectedRowChildren[7].innerText,
+              "Starting_Date": selectedRowChildren[8].innerText,
             }
           }
-          document.querySelector('#pendinglist tbody').append(tr);
+          dataArray.push(dataObj);
+
+          const xhr = new XMLHttpRequest();
+          xhr.onload = () => {
+            if (xhr.status == 200) {
+              location.reload();  // refreshing page to show updated database table
+            }
+          };
+          xhr.open("POST", "http://localhost/php/hotel-industry/add.php");  // pls adjust the url to yours
+          xhr.send(JSON.stringify(dataArray));
+
+          selectedRow.remove();
+        })
+      }
+
+      function deleteStorage(email) {  // deleting selectedRow from localStorage
+        let pendingList = JSON.parse(localStorage.getItem("pendingList"));
+
+        const index = pendingList.findIndex((item) => item.email === email);
+
+        if (index !== -1) {
+          pendingList.splice(index, 1); 
+          localStorage.setItem("pendingList", JSON.stringify(pendingList)); // updating the localStorage
         }
-      } 
+      }
     </script>
 </body>
 

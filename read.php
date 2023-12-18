@@ -1,7 +1,9 @@
+<!-- reading database to create employee table -->
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 
+// pls adjust the account info to yours
 $dbServer = "localhost";
 $dbUser = "tmpUser";
 $dbPass = "finalproject";
