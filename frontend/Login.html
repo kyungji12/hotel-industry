@@ -40,6 +40,7 @@
   const login = (resData) => {
     resData = JSON.parse(resData);
     sessionStorage.setItem("email", resData.email);
+    sessionStorage.setItem("position", JSON.stringify(resData.position));
     location.replace("./hkStatus.html");
 
   }
