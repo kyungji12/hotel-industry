@@ -2,12 +2,14 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
+include 'databaseInfo.php';
+
 
 // pls adjust the account info to yours
-$dbServer = "localhost";
-$dbUser = "tmpUser";
-$dbPass = "finalproject";
-$dbName = "finalpr";
+// $dbServer = "localhost";
+// $dbUser = "tmpUser";
+// $dbPass = "finalproject";
+// $dbName = "finalpr";
 
 $conn = new mysqli($dbServer, $dbUser, $dbPass, $dbName);
 

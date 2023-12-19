@@ -4,11 +4,13 @@ header("Access-Control-Allow-Headers: *");
 include("./roomClass.php");
 
 session_start();
+include 'databaseInfo.php';
 
-$DATABASE_HOST = "localhost";
-$DATABASE_USER = "root";
-$DATABASE_PASSWORD = "";
-$DATABASE_NAME = "finalpr";
+
+// $DATABASE_HOST = "localhost";
+// $DATABASE_USER = "root";
+// $DATABASE_PASSWORD = "";
+// $DATABASE_NAME = "finalpr";
 $connection = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASSWORD, $DATABASE_NAME);
 
 function query($connection, $prop){

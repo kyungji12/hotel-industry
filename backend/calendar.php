@@ -1,11 +1,8 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
+include 'databaseInfo.php';
 
-$dbServer = "localhost";
-$dbUser = "tmpUser";
-$dbPass = "finalproject";
-$dbName = "hotel";
 
 $conn = new mysqli($dbServer, $dbUser, $dbPass, $dbName);
 
@@ -15,7 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     echo('connection error'. $conn -> connect_error);
   } else {
     
-    $roomId = $_POST['roomId'];
+    // $roomId = $_POST['roomId'];
+    $roomId = 1001;
     $selectQuery = "SELECT occupied, did FROM `availability` WHERE rid = $roomId";
     $data = $conn->query($selectQuery);
   

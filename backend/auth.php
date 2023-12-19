@@ -1,18 +1,20 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
+include 'databaseInfo.php';
 
 session_start();
+
 
 if(isset($_POST["email"]) && isset($_POST["password"])){
     $email = $_POST["email"];
     $password = $_POST["password"];
 
     //credentials to db access
-    $DATABASE_HOST = "localhost";
-    $DATABASE_USER = "root";
-    $DATABASE_PASSWORD = "";
-    $DATABASE_NAME = "finalpr";
+    // $DATABASE_HOST = "localhost";
+    // $DATABASE_USER = "root";
+    // $DATABASE_PASSWORD = "";
+    // $DATABASE_NAME = "hotel";
 
     //connection to db
     $connection = mysqli_connect($DATABASE_HOST,$DATABASE_USER,$DATABASE_PASSWORD,$DATABASE_NAME);
