@@ -2,6 +2,7 @@
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 include 'databaseInfo.php';
+// echo $dbServer;
 
 session_start();
 
@@ -17,7 +18,7 @@ if(isset($_POST["email"]) && isset($_POST["password"])){
     // $DATABASE_NAME = "hotel";
 
     //connection to db
-    $connection = mysqli_connect($DATABASE_HOST,$DATABASE_USER,$DATABASE_PASSWORD,$DATABASE_NAME);
+    $connection = mysqli_connect($dbServer,$dbUser,$dbPass,$dbName);
 
     //Check connection
     if(!$connection){
