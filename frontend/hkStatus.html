@@ -1,126 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>HouseKeeping Status</title>
+	</head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HouseKeeping Status</title>
-</head>
+	<body>
+		<table border="1">
+			<thead>
+				<tr>
+					<th>Room Number</th>
+					<th>Type</th>
+					<th>Availability</th>
+					<th>Status</th>
+					<th>Details</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr></tr>
+			</tbody>
+		</table>
+	</body>
 
-<body>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Room Number</th>
-                <th>Type</th>
-                <th>Availability</th>
-                <th>Status</th>
-                <th>Details</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
+	<script type="module">
+		import XMLReq from './XMLReq.js'; //import xmlreq class
 
+		let xmlReq = new XMLReq(
+			'http://localhost/PHP/hotel-industry/backend/roomStatus.php'
+		); //creating the xml request.
+		// let xmlReq = new XMLReq('http://localhost/php/Finalpr/roomStatus.php'); //creating the xml request.
 
-            </tr>
-        </tbody>
-    </table>
+		const toTr = (data) => {
+			data = JSON.parse(data);
+			console.log(data);
+			let tmpObj = {
+				id: data.id,
+				type: data.type,
+				availability: data.availability,
+				status: data.status,
+				details: data.details,
+			};
+			sessionStorage.setItem('rowData', JSON.stringify(tmpObj));
 
-</body>
+			//append the info to tr
+			let tr = document.querySelectorAll('tr')[1];
+			Object.values(tmpObj).forEach((val, idx) => {
+				let td = document.createElement('td');
+				if (idx == 4) {
+					let btn = document.createElement('button');
+					btn.innerHTML = 'View Details';
+					td.appendChild(btn);
+				} else if (idx == 3) {
+					let select = document.createElement('select');
+					let option1 = document.createElement('option');
+					option1.textContent = 'Dirty';
+					let option2 = document.createElement('option');
+					option2.textContent = 'Cleaning';
+					let option3 = document.createElement('option');
+					option3.textContent = 'Clean';
+					select.appendChild(option1);
+					select.appendChild(option2);
+					select.appendChild(option3);
+					td.appendChild(select);
+				} else if (idx == 2) {
+					if (td.textContent == 0) {
+						td.textContent = 'Vacant';
+					} else {
+						td.textContent = 'Occuped';
+					}
+				} else {
+					td.textContent = val;
+				}
+				tr.appendChild(td);
+			});
+		};
 
-<script type="module">
-    import XMLReq from "./js/XMLReq.js"                                         //import xmlreq class
-    let xmlReq = new XMLReq("http://localhost/php/Finalpr/roomStatus.php");     //creating the xml request.
+		const load = () => {
+			if (sessionStorage.getItem('rowData')) {
+				xmlReq.Get().then(
+					(data) => {
+						toTr(data);
+						console.log(data);
+					},
+					(rej) => console.log(rej)
+				);
+			} else {
+				toTr(sessionStorage.getItem('rowData'));
+				console.log('error');
+			}
+		};
+		load();
 
-    const toTr = (data) => {
-        data = JSON.parse(data);
-        let tmpObj = {
-            id: data.id,
-            type: data.type,
-            availability: data.availability,
-            status: data.status,
-            details: data.details
-        }
-        sessionStorage.setItem("rowData", JSON.stringify(tmpObj));
+		function changeColor() {
+			let select = document.querySelector('select');
+			let options = selectElement.querySelectorAll('option');
 
-        //append the info to tr
-        let tr = document.querySelectorAll("tr")[1];
-        Object.values(tmpObj).forEach((val, idx) => {
-            let td = document.createElement("td");
-            if (idx == 4) {
-                let btn = document.createElement("button");
-                btn.innerHTML = 'View Details';
-                td.appendChild(btn);
-            }
-            else if (idx == 3) {
-                let select = document.createElement("select");
-                let option1 = document.createElement("option");
-                option1.textContent = "Dirty";
-                let option2 = document.createElement("option");
-                option2.textContent = "Cleaning";
-                let option3 = document.createElement("option");
-                option3.textContent = "Clean";
-                select.appendChild(option1);
-                select.appendChild(option2);
-                select.appendChild(option3);
-                td.appendChild(select);
-            }
-            else if (idx == 2) {
-                if (td.textContent == 0) {
-                    td.textContent = "Vacant";
-                }
-                else {
-                    td.textContent = "Occuped";
-                }
-            }
-            else {
-                td.textContent = val;
-            }
-            tr.appendChild(td);
-        })
-
-
-    }
-
-    const load = () => {
-        if (sessionStorage.getItem("rowData")) {
-            xmlReq.Get().then(
-                (data) => {
-                    toTr(data);
-                    console.log(data)
-                },
-                (rej) => console.log(rej)
-            );
-        } else {
-            toTr(sessionStorage.getItem("rowData"));
-            console.log("error");
-        }
-    };
-    load();
-
-
-
-
-
-    function changeColor() {
-        let select = document.querySelector("select");
-        let options = selectElement.querySelectorAll("option");
-
-        switch (select.value) {
-            case "dirty":
-                select.style.backgroundColor = "red";
-                break;
-            case "cleaning":
-                select.style.backgroundColor = "yellow";
-                break;
-            case "clean":
-                select.style.backgroundColor = "green";
-                break;
-        }
-    }
-
-
-
-</script>
-
+			switch (select.value) {
+				case 'dirty':
+					select.style.backgroundColor = 'red';
+					break;
+				case 'cleaning':
+					select.style.backgroundColor = 'yellow';
+					break;
+				case 'clean':
+					select.style.backgroundColor = 'green';
+					break;
+			}
+		}
+	</script>
 </html>
