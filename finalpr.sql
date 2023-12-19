@@ -107,27 +107,19 @@ COMMIT;
 
 ----------
 
-CREATE TABLE `rooms` (
-  `rid` int(11) NOT NULL,
-  `room_type` varchar(50) NOT NULL,
-  `status` varchar(50) NOT NULL,
-  `details` varchar(200),
-  PRIMARY KEY (rid)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- CREATE TABLE `dates` (
+--   `did` date() NOT NULL,
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `dates` (
-  `did` date() NOT NULL,
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-CREATE TABLE `availability` (
-  `aid` int(11) NOT NULL,
-  `occupied` TINYINT(1) DEFAULT 1,
-  `did` date() NOT NULL,
-  `rid` int(11) NOT NULL,
-  PRIMARY KEY (aid),
-  FOREIGN KEY (did) REFERENCES dates(rid),
-  FOREIGN KEY (rid) REFERENCES rooms(rid)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- CREATE TABLE `availability` (
+--   `aid` int(11) NOT NULL,
+--   `occupied` TINYINT(1) DEFAULT 1,
+--   `did` date() NOT NULL,
+--   `rid` int(11) NOT NULL,
+--   PRIMARY KEY (aid),
+--   FOREIGN KEY (did) REFERENCES dates(rid),
+--   FOREIGN KEY (rid) REFERENCES rooms(rid)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 
