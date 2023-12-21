@@ -27,6 +27,7 @@
 </head>
 
 <body>
+  <button onclick="logout()">Logout</button>
   <div class="container-fluid  justify-content-center mt-5">
     <div class="d-flex justify-content-between align-items-center w-75 mx-auto ">
       <div>
@@ -141,6 +142,13 @@
     </div>
 
     <script>
+      const logout = () => {
+        sessionStorage.clear();
+        location.href = './Login.html';
+      }
+      if(!sessionStorage.getItem('email')){
+        location.href = './Login.html';
+      }
       const userPosition = JSON.parse(sessionStorage.getItem("position")); // = staff or admin -> line223
 
       const tablePop = (empList) => {
@@ -164,7 +172,7 @@
             reject(xhr.statusText);
           }
         };
-        xhr.open("POST", "http://localhost/php/hotel-industry/read.php");  // pls adjust the url to yours
+        xhr.open("POST", "http://localhost/php/hotel-industry/backend/read.php");  // pls adjust the url to yours
         xhr.send();
       }).then(tablePop, (reject) => alert(reject));
 
@@ -205,7 +213,7 @@
             pendingTablePop(JSON.parse(localStorage.getItem("pendingList")));
           }
         };
-        xhr.open("POST", 'http://localhost:81/php/hotelCMS/form.php');
+        xhr.open("POST", 'http://localhost/php/hotel-industry/backend/form.php');
         xhr.send(reqData);
       })
 
@@ -277,7 +285,7 @@
               location.reload();  // refreshing page to show updated database table
             }
           };
-          xhr.open("POST", "http://localhost/php/hotel-industry/add.php");  // pls adjust the url to yours
+          xhr.open("POST", "http://localhost/php/hotel-industry/backend/add.php");  // pls adjust the url to yours
           xhr.send(JSON.stringify(dataArray));
 
           selectedRow.remove();

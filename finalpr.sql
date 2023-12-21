@@ -51,46 +51,30 @@ INSERT INTO `employees` (`id`, `fname`, `lname`, `email`, `phone_number`, `addre
 (1, 'Jeferson', 'Grimaldo', 'jefgrim@gmail.com', 12345679, '1907 granville, vancouver', 'v5c 4f3', 'backend developer', 5000, '2023-12-04', 'hola'),
 (2, 'test', 'test', 'test@mail.com', 987654321, 'test', 'test', 'tester', 1000, '2023-12-03', 'test');
 
--- --------------------------------------------------------
-
 --
 -- Table structure for table `rooms`
 --
 
 CREATE TABLE `rooms` (
-  `id` int(11) NOT NULL,
-  `type` varchar(15) NOT NULL,
-  `availability` tinyint(1) NOT NULL,
+  `rid` int(11) NOT NULL,
+  `room_type` varchar(50) NOT NULL,
   `status` varchar(50) NOT NULL,
-  `details` text NOT NULL
+  `details` varchar(200),
+  PRIMARY KEY (rid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `rooms`
 --
 
-INSERT INTO `rooms` (`id`, `type`, `availability`, `status`, `details`) VALUES
-(3, 'double', 1, 'dirty', 'test');
-
---
--- Indexes for dumped tables
---
+INSERT INTO `rooms` (`rid`, `room_type`, `status`) VALUES
+ (1001, 'double', 'dirty'), (1002, 'Twin', 'dirty');
 
 --
 -- Indexes for table `employees`
 --
 ALTER TABLE `employees`
   ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `rooms`
---
-ALTER TABLE `rooms`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
 
 --
 -- AUTO_INCREMENT for table `employees`
@@ -101,22 +85,11 @@ ALTER TABLE `employees`
 --
 -- AUTO_INCREMENT for table `rooms`
 --
-ALTER TABLE `rooms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-COMMIT;
 
-----------
-
-CREATE TABLE `rooms` (
-  `rid` int(11) NOT NULL,
-  `room_type` varchar(50) NOT NULL,
-  `status` varchar(50) NOT NULL,
-  `details` varchar(200),
-  PRIMARY KEY (rid)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `dates` (
   `did` date NOT NULL,
+  PRIMARY KEY (did)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `availability` (
@@ -124,19 +97,13 @@ CREATE TABLE `availability` (
   `occupied` TINYINT(1) DEFAULT 1,
   `did` date NOT NULL,
   `rid` int(11) NOT NULL,
-  PRIMARY KEY (aid),
-  CONSTRAINT `did`
-      FOREIGN KEY (did) REFERENCES dates (did)
-      ON DELETE CASCADE
-      ON UPDATE RESTRICT,
-  CONSTRAINT `rid`
-      FOREIGN KEY (rid) REFERENCES rooms (rid)
-      ON DELETE CASCADE
-      ON UPDATE RESTRICT
+  PRIMARY KEY (aid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+ALTER TABLE `availability` CHANGE `aid` `aid` INT(11) NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE `availability` ADD FOREIGN KEY (`did`) REFERENCES `dates`(`did`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE `availability` ADD FOREIGN KEY (`rid`) REFERENCES `rooms`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `availability` ADD FOREIGN KEY (`rid`) REFERENCES `rooms`(`rid`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
