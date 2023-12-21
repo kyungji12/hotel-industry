@@ -6,17 +6,28 @@
     <title>Calendar</title>
     <!-- Fulll calendar library : https://fullcalendar.io/docs -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <style>
+      .container {
+        width: 80%;
+        height: 100vh;
+        margin: auto;
+      }
+    </style>
   </head>
   <body>
-    <div id="calendar"></div>
+    <div class="container">
+      <h2></h2>
+      <div id="calendar"></div>
+    </div>
   </body>
   <script type="module">
     import XMLReq from "./XMLReq.js";
+    const roomId = window.location.search.split("=")[1];
+    const roomEvent = [];
 
     let xmlReq = new XMLReq(
       "http://localhost/php/hotel-industry/backend/calendar.php"
     );
-    const roomEvent = [];
 
     const makeDate = (startStr) => {
       let endStr = new Date(
@@ -47,19 +58,25 @@
     const eventClick = (info) => {
       roomEvent.map((item) => {
         if (item.start === info.event.startStr) {
-          xmlReq
-            .Post(
-              sendDate(
-                "cancellation",
-                "roomId",
-                info.event.startStr,
-                info.event.endStr
+          let check = confirm("Would you like to cancel?");
+          if (check) {
+            xmlReq
+              .Post(
+                sendDate(
+                  "cancellation",
+                  roomId,
+                  info.event.startStr,
+                  info.event.endStr
+                )
               )
-            )
-            .then(
-              (data) => console.log("data : ", data),
-              (rej) => console.log(rej)
-            );
+              .then(
+                () => {
+                  location.reload(true);
+                  alert("Canceled !");
+                },
+                (rej) => console.log(rej)
+              );
+          }
         }
       });
     };
@@ -75,21 +92,27 @@
 
       if (hasEvent.length > 0) {
         // alert
-        alert("Please select date again");
+        alert("Please select date again !");
       } else {
-        // booking
-        xmlReq
-          .Post(sendDate("booking", "roomId", info.startStr, info.endStr))
-          .then(
-            (data) => console.log("data : ", data),
-            (rej) => console.log(rej)
-          );
+        let check = confirm("Would you like to make a reservation?");
+        if (check) {
+          // booking
+          xmlReq
+            .Post(sendDate("booking", roomId, info.startStr, info.endStr))
+            .then(
+              () => {
+                location.reload(true);
+                alert("Successfully booked !");
+              },
+              (rej) => console.log(rej)
+            );
+        }
       }
     };
 
     const makeEvents = (item) => {
       let event = {};
-      event.title = "";
+      event.title = "occupied";
       event.start = item;
       return event;
     };
@@ -103,6 +126,7 @@
       let calendarEl = document.getElementById("calendar");
       let calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: "dayGridMonth",
+        height: "80%",
         headerToolbar: {
           left: "prev",
           center: "title",
@@ -123,9 +147,11 @@
     };
 
     const load = () => {
+      let headTitle = document.querySelector("h2");
+      headTitle.innerText = "Room " + roomId;
       let reqData = new FormData();
       reqData.append("request", "read");
-      // reqData.append("roomId", ); // roomId
+      reqData.append("roomId", roomId); // roomId
       xmlReq.Post(reqData).then(
         (data) =>
           JSON.parse(data).map((item) => {

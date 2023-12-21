@@ -50,8 +50,7 @@ if($_SERVER["REQUEST_METHOD"] == 'POST') {
     $dateArr = dateCalculator($startDate, $endDate);
     switch($_POST['request']) {
       case 'read':
-        // $roomId = $_POST['roomId'];
-        $roomId = 1002;
+        $roomId = $_POST['roomId'];
         $selectQuery = "SELECT occupied, did FROM `availability` WHERE rid = $roomId";
         $data = $conn->query($selectQuery);
         
