@@ -63,7 +63,7 @@ if($_SERVER["REQUEST_METHOD"] == 'POST') {
             }
             echo json_encode($outData);
         } else {
-          http_response_code(404);
+          echo $outData;
         }
         break;
       case 'booking':

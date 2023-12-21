@@ -153,12 +153,17 @@
       reqData.append("request", "read");
       reqData.append("roomId", roomId); // roomId
       xmlReq.Post(reqData).then(
-        (data) =>
-          JSON.parse(data).map((item) => {
-            let event = makeEvents(item.did);
-            roomEvent.push(event);
-            calendar(roomEvent); // calendar render
-          }),
+        (data) => {
+          if (JSON.parse(data).length == 0) {
+            calendar();
+          } else {
+            JSON.parse(data).map((item) => {
+              let event = makeEvents(item.did);
+              roomEvent.push(event);
+              calendar(roomEvent); // calendar render
+            });
+          }
+        },
         (rej) => console.log(rej)
       );
     };
