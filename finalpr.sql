@@ -97,7 +97,7 @@ CREATE TABLE `availability` (
   `occupied` TINYINT(1) DEFAULT 1,
   `did` date NOT NULL,
   `rid` int(11) NOT NULL,
-  PRIMARY KEY (aid),
+  PRIMARY KEY (aid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 ALTER TABLE `availability` CHANGE `aid` `aid` INT(11) NOT NULL AUTO_INCREMENT;

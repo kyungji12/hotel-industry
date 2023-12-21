@@ -1,5 +1,5 @@
-<!-- reading database to create employee table -->
 <?php
+// reading database to create employee table
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 include 'databaseInfo.php';
