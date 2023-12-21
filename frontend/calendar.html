@@ -4,98 +4,138 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calendar</title>
-    <!-- Fulll calendar library - 참고 : https://fullcalendar.io/docs -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js"></script> -->
+    <!-- Fulll calendar library : https://fullcalendar.io/docs -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
   </head>
   <body>
-    <div class="modal-container">
-      <div class="modal">
-        <label for="startDate"></label>
-        <input type="text" name="startDate" value="" />
-        <label for="endDate"></label>
-        <input type="text" name="endDate" value="" />
-      </div>
-    </div>
     <div id="calendar"></div>
   </body>
   <script type="module">
-    document.addEventListener("DOMContentLoaded", function () {
+    import XMLReq from "./XMLReq.js";
+
+    let xmlReq = new XMLReq(
+      "http://localhost/php/hotel-industry/backend/calendar.php"
+    );
+    const roomEvent = [];
+
+    const makeDate = (startStr) => {
+      let endStr = new Date(
+        new Date().setDate(new Date(startStr).getDate() + 2)
+      );
+      endStr =
+        endStr.getFullYear() +
+        "-" +
+        (endStr.getMonth() + 1 < 9
+          ? "0" + (endStr.getMonth() + 1)
+          : endStr.getMonth() + 1) +
+        "-" +
+        (endStr.getDate() < 9 ? "0" + endStr.getDate() : endStr.getDate());
+      return endStr;
+    };
+
+    const sendDate = (type, roomId, startDate, endDate) => {
+      let clickReq = new FormData();
+      clickReq.append("request", type);
+      clickReq.append("roomId", roomId); // roomId
+      clickReq.append("startDate", startDate);
+      endDate
+        ? clickReq.append("endDate", endDate)
+        : clickReq.append("endDate", makeDate(startDate));
+      return clickReq;
+    };
+
+    const eventClick = (info) => {
+      roomEvent.map((item) => {
+        if (item.start === info.event.startStr) {
+          xmlReq
+            .Post(
+              sendDate(
+                "cancellation",
+                "roomId",
+                info.event.startStr,
+                info.event.endStr
+              )
+            )
+            .then(
+              (data) => console.log("data : ", data),
+              (rej) => console.log(rej)
+            );
+        }
+      });
+    };
+
+    const dateSelect = (info) => {
+      const hasEvent = roomEvent.filter((event) => {
+        return (
+          new Date(info.startStr).getTime() <=
+            new Date(event.start).getTime() &&
+          new Date(info.endStr).getTime() > new Date(event.start).getTime()
+        );
+      });
+
+      if (hasEvent.length > 0) {
+        // alert
+        alert("Please select date again");
+      } else {
+        // booking
+        xmlReq
+          .Post(sendDate("booking", "roomId", info.startStr, info.endStr))
+          .then(
+            (data) => console.log("data : ", data),
+            (rej) => console.log(rej)
+          );
+      }
+    };
+
+    const makeEvents = (item) => {
+      let event = {};
+      event.title = "";
+      event.start = item;
+      return event;
+    };
+
+    const calendar = (data) => {
       const today = new Date();
       const after30d = new Date(new Date().setDate(today.getDate() + 30));
       let startDate = document.querySelectorAll("input")[0];
       let endDate = document.querySelectorAll("input")[1];
 
-      var calendarEl = document.getElementById("calendar");
-      var calendar = new FullCalendar.Calendar(calendarEl, {
+      let calendarEl = document.getElementById("calendar");
+      let calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: "dayGridMonth",
         headerToolbar: {
           left: "prev",
           center: "title",
-          right: "next,",
+          right: "next",
         },
-        // selectConstraint: {
-        //   start: today,
-        //   end: after30d,
-        // },
         validRange: {
-          //Limits which dates the user can navigate to and where events can go.
           start: today,
           end: after30d,
         },
         initialDate: today,
-        selectable: true, // Allows a user to highlight multiple days or timeslots by clicking and dragging / 참고 : https://fullcalendar.io/docs/selectable
-        unselectAuto: true, // Whether clicking elsewhere on the page will cause the current selection to be cleared.
-        select: function (info) {
-          // when user drag date : info.startStr, info.endStr
-          startDate.value = info.startStr;
-          endDate.value = info.endStr;
-        },
-        dateClick: function (info) {
-          // when user click date  : info.dateStr
-          startDate.value = info.dateStr;
-        },
-        events: [
-          // 참고 : https://fullcalendar.io/docs/event-parsing
-          {
-            title: "event1",
-            start: "2023-12-26",
-          },
-          {
-            title: "event2",
-            start: "2023-12-17",
-            end: "2023-12-19",
-          },
-          {
-            title: "event3",
-            start: "2023-12-29T12:30:00",
-            allDay: false, // will make the time show
-          },
-        ],
+        selectable: true,
+        unselectAuto: true,
+        events: data,
+        select: (info) => dateSelect(info),
+        eventClick: (info) => eventClick(info),
       });
       calendar.render();
+    };
 
-      // Events of Calendar
-      calendar.on("dateClick", (info) => console.log("dateClick:", info));
-      calendar.on("select", (info) => {
-        console.log("체크:", info);
-
-        // mySchStart.value = info.startStr;
-        // mySchEnd.value = info.endStr;
-
-        // YrModal.style.display = "block";
-      });
-      calendar.on("eventClick", (info) => {
-        console.log("eClick:", info);
-        console.log("Event: ", info.event.extendedProps);
-        console.log("Coordinates: ", info.jsEvent);
-        console.log("View: ", info.view);
-        // Change border color when user click the event
-        info.el.style.borderColor = "red";
-      });
-      calendar.on("eventAdd", (info) => console.log("Add:", info));
-      calendar.on("eventChange", (info) => console.log("Change:", info));
-      calendar.on("eventRemove", (info) => console.log("Remove:", info));
-    });
+    const load = () => {
+      let reqData = new FormData();
+      reqData.append("request", "read");
+      // reqData.append("roomId", ); // roomId
+      xmlReq.Post(reqData).then(
+        (data) =>
+          JSON.parse(data).map((item) => {
+            let event = makeEvents(item.did);
+            roomEvent.push(event);
+            calendar(roomEvent); // calendar render
+          }),
+        (rej) => console.log(rej)
+      );
+    };
+    load();
   </script>
 </html>
