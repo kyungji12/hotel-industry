@@ -1,167 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HouseKeeping Status</title>
+  </head>
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>HouseKeeping Status</title>
-</head>
+  <body>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Room Number</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </body>
 
-<body>
-	<table border="1">
-		<thead>
-			<tr>
-				<th>Room Number</th>
-				<th>Type</th>
-				<th>Status</th>
-				<th>Details</th>
-			</tr>
-		</thead>
-		<tbody>
+  <script type="module">
+    import XMLReq from "./XMLReq.js"; //import xmlreq class
+    let xmlReq = new XMLReq(
+      "http://localhost/php/hotel-industry/backend/roomStatus.php"
+    ); //creating the xml request.
+    // let xmlReq = new XMLReq('http://localhost/php/Finalpr/roomStatus.php'); //creating the xml request.
 
-		</tbody>
-	</table>
-</body>
+    const toTr = (data) => {
+      //append the info to tr
+      Object.values(data).forEach((row) => {
+        let tr = document.createElement("tr");
+        row.forEach((val, idx) => {
+          let td = document.createElement("td");
+          tools(idx, td, val, data);
+          tr.appendChild(td);
+        });
+        document.querySelector("tbody").appendChild(tr);
+      });
+    };
 
-<script type="module">
-	import XMLReq from './XMLReq.js'; //import xmlreq class
-	let xmlReq = new XMLReq(
-		'http://localhost/php/hotel-industry-main/backend/roomStatus.php'
-	); //creating the xml request.
-	// let xmlReq = new XMLReq('http://localhost/php/Finalpr/roomStatus.php'); //creating the xml request.
+    const load = () => {
+      xmlReq.Get().then(
+        (data) => {
+          data = JSON.parse(data);
+          console.log("data", data);
+          sessionStorage.setItem("rowData", JSON.stringify(data));
+          toTr(data);
+        },
+        (rej) => console.log(rej)
+      );
+    };
+    load();
 
-	const toTr = (data) => {
-		//append the info to tr
-		Object.values(data).forEach((row) => {
-			let tr = document.createElement("tr");
-			row.forEach((val, idx) => {
-				let td = document.createElement("td");
-				tools(idx, td, val, data);
-				tr.appendChild(td);
-			});
-			document.querySelector('tbody').appendChild(tr);
-		});
-	};
+    function tools(index, td, val) {
+      if (index == 0) {
+        td.textContent = val;
+      } else if (index == 1) {
+        td.textContent = val;
+      } else if (index == 2) {
+        let select = document.createElement("select");
+        if (val == "Dirty") {
+          let option1 = document.createElement("option");
+          option1.textContent = "dirty";
+          let option2 = document.createElement("option");
+          option2.textContent = "cleaning";
+          let option3 = document.createElement("option");
+          option3.textContent = "clean";
+          select.appendChild(option1);
+          select.appendChild(option2);
+          select.appendChild(option3);
+        } else if (val == "Cleaning") {
+          let option1 = document.createElement("option");
+          option1.textContent = "cleaning";
+          let option2 = document.createElement("option");
+          option2.textContent = "dirty";
+          let option3 = document.createElement("option");
+          option3.textContent = "clean";
+          select.appendChild(option1);
+          select.appendChild(option2);
+          select.appendChild(option3);
+        } else if (val == "Clean") {
+          let option1 = document.createElement("option");
+          option1.textContent = "clean";
+          let option2 = document.createElement("option");
+          option2.textContent = "cleaning";
+          let option3 = document.createElement("option");
+          option3.textContent = "dirty";
+          select.appendChild(option1);
+          select.appendChild(option2);
+          select.appendChild(option3);
+        }
+        //select on change method
+        select.onchange = function (e) {
+          changeColor(select);
+          let id = td.previousSibling.previousSibling.textContent; //to get the id
+          console.log(id);
+          editStatus(id, e.target.value);
+        };
+        changeColor(select);
+        td.appendChild(select);
+      } else if (index == 3) {
+        //create a button to show details
+        let showBtn = document.createElement("button");
+        showBtn.textContent = "Show Details";
+        showBtn.addEventListener("click", (e) => {
+          let id = td.parentElement.firstChild.innerText;
+          window.location.href = "./calendar.html?roomId=" + id;
+        });
+        td.appendChild(showBtn);
+      }
+    }
 
-	const load = () => {
-		xmlReq.Get().then(
-			(data) => {
-				data = JSON.parse(data);
-				console.log(data);
-				sessionStorage.setItem('rowData', JSON.stringify(data));
-				toTr(data);
-			},
-			(rej) => console.log(rej)
-		);
-	};
-	load();
+    const changeColor = (select) => {
+      switch (select.value) {
+        case "Dirty":
+          select.style.backgroundColor = "red";
+          break;
+        case "Cleaning":
+          select.style.backgroundColor = "yellow";
+          break;
+        case "Clean":
+          select.style.backgroundColor = "#7eda3b";
+          break;
+      }
+    };
 
-	function tools(index, td, val) {
-		if (index == 0) {
-			td.textContent = val;
-		} else if (index == 1) {
-			td.textContent = val;
-		} else if (index == 2) {
-			let select = document.createElement('select');
-			if (val == "dirty") {
-				let option1 = document.createElement('option');
-				option1.textContent = 'dirty';
-				let option2 = document.createElement('option');
-				option2.textContent = 'cleaning';
-				let option3 = document.createElement('option');
-				option3.textContent = 'clean';
-				select.appendChild(option1);
-				select.appendChild(option2);
-				select.appendChild(option3);
-			}
-			else if (val == "cleaning") {
-				let option1 = document.createElement('option');
-				option1.textContent = 'cleaning';
-				let option2 = document.createElement('option');
-				option2.textContent = 'dirty';
-				let option3 = document.createElement('option');
-				option3.textContent = 'clean';
-				select.appendChild(option1);
-				select.appendChild(option2);
-				select.appendChild(option3);
-			}
-			else if (val == "clean") {
-				let option1 = document.createElement('option');
-				option1.textContent = 'clean';
-				let option2 = document.createElement('option');
-				option2.textContent = 'cleaning';
-				let option3 = document.createElement('option');
-				option3.textContent = 'dirty';
-				select.appendChild(option1);
-				select.appendChild(option2);
-				select.appendChild(option3);
-			}
-			//select on change method
-			select.onchange = function (e) {
-				changeColor(select);
-				let id = td.previousSibling.previousSibling.textContent; //to get the id
-				console.log(id);
-				editStatus(id, e.target.value);
+    function editStatus(id, newStatus) {
+      let xhr = new XMLHttpRequest();
+      xhr.onload = () => {
+        if (xhr.status == 200) {
+          sessionStorage.setItem("status", xhr.responseText);
+        } else {
+          console.log("Error on the request");
+        }
+      };
+      xhr.open(
+        "POST",
+        "http://localhost/php/hotel-industry-main/backend/editStatus.php"
+      );
+      xhr.setRequestHeader("Content-Type", "application/json");
+      const data = JSON.stringify({
+        id: id,
+        newStatus: newStatus,
+      });
+      console.log(data);
+      xhr.send(data);
+    }
 
-			}
-			changeColor(select);
-			td.appendChild(select);
-		} else if (index == 3) {
-			//create a button to show details
-			let showBtn = document.createElement('button');
-			showBtn.textContent = "Show Details";
-			showBtn.onclick = function showDetails() {
-				let details = window.open("ROOM DETAILS", "DETAILS", " width=50,heigth=50");
-				detailsPage(details, val);
-
-			}
-			td.appendChild(showBtn);
-		}
-	}
-
-
-	const changeColor = (select) => {
-		switch (select.value) {
-			case 'dirty':
-				select.style.backgroundColor = 'red';
-				break;
-			case 'cleaning':
-				select.style.backgroundColor = 'yellow';
-				break;
-			case 'clean':
-				select.style.backgroundColor = '#7eda3b';
-				break;
-		}
-	}
-
-	function editStatus(id, newStatus) {
-		let xhr = new XMLHttpRequest();
-		xhr.onload = () => {
-			if (xhr.status == 200) {
-				sessionStorage.setItem("status", xhr.responseText);
-			} else {
-				console.log("Error on the request");
-			}
-		};
-		xhr.open("POST", "http://localhost/php/hotel-industry-main/backend/editStatus.php");
-		xhr.setRequestHeader("Content-Type", "application/json");
-		const data = JSON.stringify({
-			id: id,
-			newStatus: newStatus
-		});
-		console.log(data);
-		xhr.send(data);
-
-	}
-
-	function detailsPage(details, val) {
-		details.document.write("<h2> ROOMS DETAILS: </h2>");
-		let lines = val.split(".");
-		for(let line of lines){
-			details.document.write(line+"<br>");
-		}
-	}
-
-</script>
-
+    function detailsPage(details, val) {
+      details.document.write("<h2> ROOMS DETAILS: </h2>");
+      let lines = val.split(".");
+      for (let line of lines) {
+        details.document.write(line + "<br>");
+      }
+    }
+  </script>
 </html>
