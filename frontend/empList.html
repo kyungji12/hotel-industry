@@ -27,7 +27,6 @@
 </head>
 
 <body>
-  <button onclick="logout()">Logout</button>
   <div class="container-fluid  justify-content-center mt-5">
     <div class="d-flex justify-content-between align-items-center w-75 mx-auto ">
       <div>
@@ -36,6 +35,7 @@
       <div>
         <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
           data-bs-target="#registerForm">REGISTER</button>
+        <button type="button" class="btn btn-outline-success" onclick="logout()">Logout</button>
       </div>
     </div>
 
@@ -146,7 +146,7 @@
         sessionStorage.clear();
         location.href = './Login.html';
       }
-      if(!sessionStorage.getItem('email')){
+      if (!sessionStorage.getItem('email')) {
         location.href = './Login.html';
       }
       const userPosition = JSON.parse(sessionStorage.getItem("position")); // = staff or admin -> line223
@@ -298,7 +298,7 @@
         const index = pendingList.findIndex((item) => item.email === email);
 
         if (index !== -1) {
-          pendingList.splice(index, 1); 
+          pendingList.splice(index, 1);
           localStorage.setItem("pendingList", JSON.stringify(pendingList)); // updating the localStorage
         }
       }
