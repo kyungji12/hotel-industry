@@ -74,7 +74,7 @@ if($_SERVER["REQUEST_METHOD"] == 'POST') {
           $data = $conn->query($selectQuery);
           $flag = true;
         }
-
+        
         if ($flag) {
           http_response_code(200);
         } else {
@@ -86,6 +86,7 @@ if($_SERVER["REQUEST_METHOD"] == 'POST') {
           foreach($dateArr as $date) {
             $selectQuery = "DELETE FROM availability WHERE did = '$date' AND rid = $roomId;";
             $data = $conn->query($selectQuery);
+            $flag = true;
           }
           if ($flag) {
             http_response_code(200);
