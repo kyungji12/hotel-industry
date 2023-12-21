@@ -149,7 +149,8 @@
       if (!sessionStorage.getItem('email')) {
         location.href = './Login.html';
       }
-      const userPosition = JSON.parse(sessionStorage.getItem("position")); // = staff or admin -> line223
+      const userPosition = JSON.parse(sessionStorage.getItem("position"));
+      document.querySelector("h1").innerHTML = "Welcome!" + " " + userPosition.toUpperCase();  // showing userPosition
 
       const tablePop = (empList) => {
         for (let emp of empList) {
