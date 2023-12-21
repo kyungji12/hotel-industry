@@ -32,7 +32,9 @@ while ($row = mysqli_fetch_assoc($roomData)) {  //while to iterate in each row a
         $row["details"],     //"" details ""
     );
 
-    $rooms[] = $room;       //save on an array each room
+    // $rooms[] = $room;       //save on an array each room
+
+    $rooms[] = array_map('strval', array_values((array) $room));
 }   
 echo json_encode($rooms);           //cast to JSON
 ?>
