@@ -3,15 +3,13 @@ class Room
 {
     public $id;
     public $type;
-    public $availability;
     public $status;
     public $details;
 
-    public function __construct($id, $type, $availability, $status, $details)
+    public function __construct($id, $type, $status, $details)
     {
         $this->id = $id;
         $this->type = $type;
-        $this->availability = $availability;
         $this->status = $status;
         $this->details = $details;
     }
@@ -24,23 +22,7 @@ class Room
     {
         return $this->type;
     }
-    public function isAvailable($bool)
-    {
-        if ($bool == 0) {
-            return "Vacant";
-        } else {
-            return "Occuped";
-        }
-    }
-    public function setAvailability($availability)
-    {
-        $this->availability = $availability;
-    }
-
-    public function getAvailability()
-    {
-        return $this->availability;
-    }
+    
     public function getStatus()
     {
         return $this->status;
