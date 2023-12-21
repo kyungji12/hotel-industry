@@ -155,7 +155,7 @@
       xmlReq.Post(reqData).then(
         (data) => {
           if (JSON.parse(data).length == 0) {
-            calendar();
+            calendar([]);
           } else {
             JSON.parse(data).map((item) => {
               let event = makeEvents(item.did);
