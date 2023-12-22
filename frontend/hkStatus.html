@@ -114,13 +114,14 @@
 
     const changeColor = (select) => {
       switch (select.value) {
-        case "Dirty":
+        case "dirty":
+          console.log(select.value);
           select.style.backgroundColor = "red";
           break;
-        case "Cleaning":
+        case "cleaning":
           select.style.backgroundColor = "yellow";
           break;
-        case "Clean":
+        case "clean":
           select.style.backgroundColor = "#7eda3b";
           break;
       }
